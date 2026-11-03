@@ -104,8 +104,7 @@ class XboardAccount(context: Context) {
         } else {
             val profile = profiles.current()
             val previous = binding.subscription
-            val due = profile == null || now - profile.updatedAt >=
-                (profile.interval.takeIf { it > 0 } ?: TimeUnit.HOURS.toMillis(24))
+            val due = profile == null || (profile.interval > 0 && now - profile.updatedAt >= profile.interval)
             val changed = previous?.planId != subscription.planId ||
                 previous?.expiredAt != subscription.expiredAt || profile?.source != subscription.subscribeUrl
             if (force || changed || due) {

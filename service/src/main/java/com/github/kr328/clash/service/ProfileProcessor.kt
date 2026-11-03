@@ -71,7 +71,7 @@ object ProfileProcessor {
 
                         val old = ImportedDao().queryByUUID(snapshot.uuid)
                         val updateInterval = subscriptionInfo?.subUpdateInterval
-                            ?.takeIf { old == null && snapshot.interval == 0L }
+                            ?.takeIf { uuid != XboardProfile.id && old == null && snapshot.interval == 0L }
                             ?: snapshot.interval
                         val new = Imported(
                             snapshot.uuid,
