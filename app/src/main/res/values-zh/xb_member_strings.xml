@@ -1,4 +1,5 @@
 <resources>
+    <string name="xb_member_loading">正在读取会员信息…</string>
     <string name="xb_back_to_member">返回会员中心</string>
     <string name="xb_member_guest">登录查看套餐</string>
     <string name="xb_member_guest_hint">使用会员账号登录或注册</string>

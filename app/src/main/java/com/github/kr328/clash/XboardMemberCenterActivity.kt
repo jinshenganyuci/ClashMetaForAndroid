@@ -35,6 +35,7 @@ class XboardMemberCenterActivity : AppCompatActivity() {
     private var load: Job? = null
     private var member: XboardBinding? = null
     private var loaded = false
+    private var waitingForAccount = View.NO_ID
     private var nextSection = View.NO_ID
     private var returningFromSettings = false
     private val signIn = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -100,8 +101,8 @@ class XboardMemberCenterActivity : AppCompatActivity() {
                 if (e is XboardSessionExpiredException) render(null)
                 message.setText(if (e is XboardSessionExpiredException) R.string.xb_expired_session else R.string.xb_member_load_failed)
                 message.isVisible = true
-            } finally {
                 loaded = true
+                waitingForAccount = View.NO_ID
             }
         }
     }
@@ -135,10 +136,19 @@ class XboardMemberCenterActivity : AppCompatActivity() {
             bar.progress = (fraction.coerceIn(0.0, 1.0) * bar.max).roundToInt()
             usage.text = sub.usageText(this)
         }
+        if (waitingForAccount != View.NO_ID) {
+            val section = waitingForAccount
+            waitingForAccount = View.NO_ID
+            selectSection(section)
+        }
     }
 
     private fun selectSection(id: Int) {
-        if (!loaded || nextSection != View.NO_ID) return
+        if (!loaded) {
+            waitingForAccount = id
+            return
+        }
+        if (nextSection != View.NO_ID) return
         if (member == null) {
             nextSection = id
             signIn.launch(planIntent())
@@ -175,6 +185,7 @@ class XboardMemberCenterActivity : AppCompatActivity() {
     override fun onStop() {
         load?.cancel()
         loaded = false
+        waitingForAccount = View.NO_ID
         super.onStop()
     }
 

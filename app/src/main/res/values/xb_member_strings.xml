@@ -1,4 +1,5 @@
 <resources>
+    <string name="xb_member_loading">Loading membership…</string>
     <string name="xb_back_to_member">Back to member center</string>
     <string name="xb_member_guest">Sign in to view your plan</string>
     <string name="xb_member_guest_hint">Sign in or create a member account</string>

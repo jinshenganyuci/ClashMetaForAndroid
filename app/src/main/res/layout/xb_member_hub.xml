@@ -29,7 +29,7 @@
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="@string/xb_plan" android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                         android:textColor="?attr/colorPrimary" />
-                    <TextView android:id="@+id/member_plan_name" android:layout_width="match_parent"
+                    <TextView android:id="@+id/member_plan_name" android:text="@string/xb_member_loading" android:layout_width="match_parent"
                         android:layout_height="wrap_content" android:layout_marginTop="6dp"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
                     <TextView android:id="@+id/member_expiry" android:layout_width="match_parent"
