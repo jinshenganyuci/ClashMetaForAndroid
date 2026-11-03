@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/register_page" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="24dp" android:focusableInTouchMode="true">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/xb_site" android:textColor="?attr/colorPrimary"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" android:text="@string/xb_create_account"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" android:text="@string/xb_register_intro"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
+        <LinearLayout android:id="@+id/register_fields" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical"
+            android:layout_marginTop="16dp" android:visibility="gone">
+            <EditText android:id="@+id/register_email" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:minHeight="52dp" android:singleLine="true"
+                android:hint="@string/xb_email" android:inputType="textEmailAddress" android:autofillHints="emailAddress"/>
+            <LinearLayout android:id="@+id/register_mail_row" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+                <EditText android:id="@+id/register_code" android:layout_width="0dp" android:layout_weight="1"
+                    android:layout_height="wrap_content" android:minHeight="52dp" android:singleLine="true"
+                    android:hint="@string/xb_email_code" android:inputType="number" android:maxLength="6"
+                    android:saveEnabled="false"/>
+                <Button android:id="@+id/register_send_code" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/xb_send_code" android:textAllCaps="false"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"/>
+            </LinearLayout>
+            <EditText android:id="@+id/register_password" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:minHeight="52dp" android:singleLine="true"
+                android:hint="@string/xb_new_password" android:inputType="textPassword"
+                android:autofillHints="newPassword" android:saveEnabled="false"/>
+            <EditText android:id="@+id/register_confirm" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:minHeight="52dp" android:singleLine="true"
+                android:hint="@string/xb_confirm_password" android:inputType="textPassword"
+                android:saveEnabled="false" android:autofillHints="newPassword"/>
+            <EditText android:id="@+id/register_invite" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:minHeight="52dp" android:singleLine="true"
+                android:hint="@string/xb_invite_optional" android:inputType="textNoSuggestions"/>
+            <LinearLayout android:id="@+id/register_terms_row" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+                <CheckBox android:id="@+id/register_accept" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/xb_accept_terms"/>
+                <Button android:id="@+id/register_view_terms" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/xb_read_terms"
+                    style="@style/Widget.MaterialComponents.Button.TextButton" android:textAllCaps="false"/>
+            </LinearLayout>
+        </LinearLayout>
+        <Button android:id="@+id/register_submit" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="16dp"
+            android:text="@string/xb_create_account" android:textAllCaps="false" android:enabled="false"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:gravity="center_vertical" android:orientation="horizontal">
+            <ProgressBar android:id="@+id/register_progress" android:layout_width="24dp"
+                android:layout_height="24dp" android:layout_marginEnd="12dp" android:visibility="gone"/>
+            <TextView android:id="@+id/register_status" android:layout_width="0dp" android:layout_weight="1"
+                android:layout_height="wrap_content" android:accessibilityLiveRegion="polite"/>
+        </LinearLayout>
+        <Button android:id="@+id/register_back" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton" android:text="@string/xb_back_to_login"
+            android:textAllCaps="false"/>
+    </LinearLayout>
+</ScrollView>

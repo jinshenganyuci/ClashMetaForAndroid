@@ -72,6 +72,11 @@
         </activity-alias>
 
         <activity
+            android:name=".XboardRegisterActivity"
+            android:exported="false"
+            android:label="@string/xb_create_account"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".XboardAccountActivity"
             android:exported="false"
             android:label="@string/xb_plan"

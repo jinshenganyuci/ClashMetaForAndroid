@@ -19,18 +19,36 @@ class XboardAccount(context: Context) {
     suspend fun login(email: String, password: String): XboardBinding = withContext(Dispatchers.IO) {
         lock.withLock {
             val bearer = XboardApi.login(email.trim(), password)
-            val old = store.read()
-            if (old == null || !old.email.equals(email.trim(), ignoreCase = true)) {
-                profiles.remove()
-            }
-            val binding = if (old != null && old.email.equals(email.trim(), ignoreCase = true)) {
-                old.copy(bearer = bearer)
-            } else {
-                XboardBinding(email.trim(), bearer)
-            }
-            store.save(binding)
-            sync(binding, force = true, activate = true)
+            sync(bind(email, bearer), force = true, activate = true)
         }
+    }
+
+    suspend fun register(email: String, password: String, code: String, invite: String): Boolean =
+        withContext(Dispatchers.IO) {
+            lock.withLock {
+                val bearer = XboardApi.register(email, password, code, invite)
+                // The server has created the account. Never repeat the POST if saving its session fails.
+                try {
+                    bind(email, bearer)
+                    true
+                } catch (e: kotlinx.coroutines.CancellationException) {
+                    throw e
+                } catch (_: Exception) {
+                    false
+                }
+            }
+        }
+
+    private suspend fun bind(email: String, bearer: String): XboardBinding {
+        val old = store.read()
+        val binding = if (old != null && old.email.equals(email.trim(), ignoreCase = true)) {
+            old.copy(bearer = bearer)
+        } else {
+            profiles.remove()
+            XboardBinding(email.trim(), bearer)
+        }
+        store.save(binding)
+        return binding
     }
 
     suspend fun refresh(force: Boolean): XboardBinding? = withContext(Dispatchers.IO) {

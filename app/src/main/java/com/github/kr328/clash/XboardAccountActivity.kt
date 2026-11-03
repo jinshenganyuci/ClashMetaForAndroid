@@ -1,5 +1,6 @@
 package com.github.kr328.clash
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.format.Formatter
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -33,6 +35,20 @@ class XboardAccountActivity : AppCompatActivity() {
     private val status by lazy { findViewById<TextView>(R.id.account_status) }
     private var binding: XboardBinding? = null
     private var busy = false
+    private var refreshNewAccount = false
+
+    private val registration = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        when (result.resultCode) {
+            RESULT_OK -> {
+                refreshNewAccount = true
+                if (!busy) finishRegistration()
+            }
+            RESULT_FIRST_USER -> {
+                email.setText(result.data?.getStringExtra("email").orEmpty())
+                status.setText(R.string.xb_registered_sign_in)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +60,10 @@ class XboardAccountActivity : AppCompatActivity() {
             insets
         }
         findViewById<Button>(R.id.account_back).setOnClickListener { finish() }
+        findViewById<Button>(R.id.account_register).setOnClickListener {
+            registration.launch(Intent(this, XboardRegisterActivity::class.java)
+                .putExtra("email", email.text.toString().trim()))
+        }
         primary.setOnClickListener { submit() }
         password.setOnEditorActionListener { _, action, _ ->
             if (action == EditorInfo.IME_ACTION_DONE) { submit(); true } else false
@@ -57,6 +77,18 @@ class XboardAccountActivity : AppCompatActivity() {
                 }.show()
         }
         perform { render(account.cached()) }
+    }
+
+    private fun finishRegistration() {
+        refreshNewAccount = false
+        perform {
+            val updated = account.refresh(force = true)
+            render(updated)
+            if (updated?.profileId != null) {
+                Toast.makeText(this, R.string.xb_login_ready, Toast.LENGTH_LONG).show()
+                finish()
+            }
+        }
     }
 
     private fun submit() {
@@ -103,6 +135,7 @@ class XboardAccountActivity : AppCompatActivity() {
                 })
             } finally {
                 setBusy(false)
+                if (refreshNewAccount && !isFinishing && !isDestroyed) finishRegistration()
             }
         }
     }
@@ -111,6 +144,7 @@ class XboardAccountActivity : AppCompatActivity() {
         busy = value
         primary.isEnabled = !value
         logout.isEnabled = !value
+        findViewById<Button>(R.id.account_register).isEnabled = !value
         email.isEnabled = !value
         password.isEnabled = !value
         findViewById<View>(R.id.account_progress).visibility = if (value) View.VISIBLE else View.GONE
@@ -124,6 +158,7 @@ class XboardAccountActivity : AppCompatActivity() {
         val title = findViewById<TextView>(R.id.account_title)
         val details = findViewById<TextView>(R.id.account_details)
         findViewById<View>(R.id.login_fields).visibility = if (signedIn) View.GONE else View.VISIBLE
+        findViewById<Button>(R.id.account_register).visibility = if (signedIn) View.GONE else View.VISIBLE
         logout.visibility = if (signedIn) View.VISIBLE else View.GONE
         primary.setText(if (signedIn) R.string.xb_refresh else R.string.xb_submit)
         title.text = when {

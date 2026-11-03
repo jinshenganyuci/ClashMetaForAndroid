@@ -35,6 +35,9 @@
             <TextView android:id="@+id/account_status" android:layout_width="0dp" android:layout_weight="1"
                 android:layout_height="wrap_content" android:accessibilityLiveRegion="polite"/>
         </LinearLayout>
+        <Button android:id="@+id/account_register" android:layout_width="match_parent"
+            android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:text="@string/xb_create_account" android:textAllCaps="false" android:visibility="gone"/>
         <Button android:id="@+id/account_back" android:layout_width="match_parent"
             android:layout_height="wrap_content" android:layout_marginTop="16dp"
             style="@style/Widget.MaterialComponents.Button.TextButton" android:text="@string/xb_home" android:textAllCaps="false"/>
