@@ -19,8 +19,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          submodules: recursive
           persist-credentials: false
+
+      # The native version string looks up the remote branch containing the pinned core.
+      - name: Check out the full Mihomo submodule history
+        run: git submodule update --init --recursive
 
       - uses: actions/setup-java@v5
         with:
