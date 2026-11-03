@@ -1,0 +1,69 @@
+<resources>
+    <item name="xb_profile_wallet" type="id"/>
+    <item name="xb_profile_password" type="id"/>
+    <item name="xb_profile_expire" type="id"/>
+    <item name="xb_profile_traffic" type="id"/>
+    <item name="xb_profile_reminders_save" type="id"/>
+    <item name="xb_profile_reset" type="id"/>
+    <item name="xb_profile_telegram" type="id"/>
+    <item name="xb_profile_old_password" type="id"/>
+    <item name="xb_profile_new_password" type="id"/>
+    <item name="xb_profile_confirm_password" type="id"/>
+    <item name="xb_invite_generate" type="id"/>
+    <item name="xb_invite_copy" type="id"/>
+    <item name="xb_invite_transfer" type="id"/>
+    <item name="xb_invite_withdraw" type="id"/>
+    <item name="xb_invite_history" type="id"/>
+    <item name="xb_invite_next" type="id"/>
+    <item name="xb_invite_previous" type="id"/>
+
+    <string name="xb_prof_wallet">Wallet balance · %1$s</string>
+    <string name="xb_prof_password">Change password</string>
+    <string name="xb_prof_expiry">Email me before my plan expires</string>
+    <string name="xb_prof_traffic">Email me when my data is running low</string>
+    <string name="xb_prof_save_reminders">Save notification settings</string>
+    <string name="xb_prof_saved">Notification settings saved</string>
+    <string name="xb_prof_telegram_bound">Telegram linked</string>
+    <string name="xb_prof_telegram_bind">Link Telegram</string>
+    <string name="xb_prof_telegram_group">Open Telegram discussion group</string>
+    <string name="xb_prof_reset">Reset subscription credentials</string>
+    <string name="xb_prof_reset_confirmation">Reset the subscription link and node credentials? The old link will stop working. Other devices will need the new subscription.</string>
+    <string name="xb_prof_reset_action">Reset subscription</string>
+    <string name="xb_prof_reset_done">Subscription reset. Updating this device’s configuration.</string>
+    <string name="xb_prof_old">Current password</string>
+    <string name="xb_prof_new">New password</string>
+    <string name="xb_prof_confirm">Confirm new password</string>
+    <string name="xb_prof_save">Save</string>
+    <string name="xb_prof_password_done">Password changed. Other sessions require sign-in again.</string>
+    <string name="xb_prof_telegram_instructions">Copy the command and send it in a private chat to @%1$s. It includes your personal subscription link.</string>
+    <string name="xb_prof_copy_command">Copy binding command</string>
+    <string name="xb_prof_open_bot">Open @%1$s</string>
+    <string name="xb_prof_no_link_handler">No app can open this Telegram link.</string>
+    <string name="xb_prof_copied">Copied to clipboard</string>
+    <string name="xb_prof_continue">Continue</string>
+    <string name="xb_inv_available">Available commission · %1$s</string>
+    <string name="xb_inv_summary">Registered users  %1$d\nCommission rate  %2$s%%\nTotal earned  %3$s\nPending commission  %4$s</string>
+    <string name="xb_inv_levels">Commission split · Level 1 %1$s%% · Level 2 %2$s%% · Level 3 %3$s%%</string>
+    <string name="xb_inv_codes">Invitation codes</string>
+    <string name="xb_inv_no_codes">No invitation codes yet.</string>
+    <string name="xb_inv_code">%1$s · Created %2$s</string>
+    <string name="xb_inv_copy">Copy invitation link</string>
+    <string name="xb_inv_generate">Generate invitation code</string>
+    <string name="xb_inv_generated">Invitation code generated</string>
+    <string name="xb_inv_history">Commission history</string>
+    <string name="xb_inv_no_records">No commission payments yet.</string>
+    <string name="xb_inv_record">%1$s · Commission %2$s\nOrder %3$s · Amount %4$s</string>
+    <string name="xb_inv_page">Page %1$d of %2$d</string>
+    <string name="xb_inv_next">Next page</string>
+    <string name="xb_inv_previous">Previous page</string>
+    <string name="xb_inv_transfer">Transfer to wallet</string>
+    <string name="xb_inv_amount">Amount</string>
+    <string name="xb_inv_invalid_amount">Enter a positive amount within your available commission, with up to two decimal places.</string>
+    <string name="xb_inv_transfer_confirmation">Transfer %1$s of commission to your spending balance?</string>
+    <string name="xb_inv_transferred">Commission transferred to wallet</string>
+    <string name="xb_inv_withdraw">Request commission withdrawal</string>
+    <string name="xb_inv_method">Withdrawal method</string>
+    <string name="xb_inv_recipient">Receiving account</string>
+    <string name="xb_inv_submit">Submit request</string>
+    <string name="xb_inv_withdrawn">Withdrawal request submitted. View its progress in My tickets.</string>
+</resources>
