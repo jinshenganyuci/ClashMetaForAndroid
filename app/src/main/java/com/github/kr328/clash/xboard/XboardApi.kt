@@ -8,9 +8,12 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.URI
 import java.net.URL
+import java.net.URLEncoder
 import javax.net.ssl.HttpsURLConnection
 
 class XboardSessionExpiredException : IOException("登录已失效，请重新登录")
+
+internal class XboardMemberRequestException(message: String) : IOException(message)
 
 data class XboardNode(
     val name: String,
@@ -90,19 +93,19 @@ object XboardApi {
     private const val REGISTER = "/passport/auth/register"
     private const val SEND_CODE = "/passport/comm/sendEmailVerify"
 
-    suspend fun memberWebSession(bearer: String, section: String): String = withContext(Dispatchers.IO) {
-        require(section in setOf("knowledge", "order", "invite", "ticket", "profile"))
-        val quick = request("/user/getQuickLoginUrl", bearer = bearer, body = JSONObject().put("redirect", "/$section"))
-        val uri = try { URI(quick.optString("data")) } catch (_: java.net.URISyntaxException) { null }
-        val verify = uri?.takeIf {
-            it.scheme == "https" && it.host.equals("ikun.iil.im", true) && it.port in setOf(-1, 443) &&
-                it.userInfo == null && it.path == "/" && it.rawQuery == null
-        }?.fragment?.let {
-            Regex("/login\\?verify=([A-Za-z0-9_-]{16,128})&redirect=/$section").matchEntire(it)?.groupValues?.get(1)
-        } ?: throw IOException("无效的会员页面登录地址")
-        // Redeem the short-lived code on our fixed API origin. The real URL never enters WebView history.
-        authData(request("/passport/auth/token2Login?verify=$verify"))
-    }
+    suspend fun memberRequest(bearer: String, path: String, params: Map<String, String>, post: Boolean): JSONObject =
+        withContext(Dispatchers.IO) {
+            require(path.matches(Regex("(user|guest)/[A-Za-z]+(/[A-Za-z]+)?")))
+            val query = if (post || params.isEmpty()) "" else params.entries.joinToString("&", prefix = "?") {
+                URLEncoder.encode(it.key, "UTF-8") + "=" + URLEncoder.encode(it.value, "UTF-8")
+            }
+            val body = if (post) JSONObject(params) else null
+            request("/$path$query", bearer = bearer, body = body, maxResponseChars = 8 * 1024 * 1024).also {
+                if (it.optString("status") == "fail" || it.opt("data") == false) {
+                    throw XboardMemberRequestException(it.optString("message").take(200))
+                }
+            }
+        }
 
     suspend fun login(email: String, password: String): String = withContext(Dispatchers.IO) {
         val body = JSONObject().put("email", email.trim()).put("password", password)
@@ -209,6 +212,9 @@ object XboardApi {
                 if (path == REGISTER || path == SEND_CODE) {
                     val retry = connection.getHeaderField("Retry-After")?.toIntOrNull()?.takeIf { it in 1..86400 }
                     throw registrationFailure(status, error, path == REGISTER, retry)
+                }
+                if (bearer != null && status in setOf(400, 403, 422) && error?.optString("message").orEmpty().isNotBlank()) {
+                    throw XboardMemberRequestException(error!!.getString("message").take(200))
                 }
                 val message = when {
                     body != null && status in setOf(400, 401, 403, 422) -> "登录失败，请检查邮箱、密码和账号状态"

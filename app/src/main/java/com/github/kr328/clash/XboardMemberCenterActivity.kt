@@ -165,11 +165,11 @@ class XboardMemberCenterActivity : AppCompatActivity() {
             R.id.member_plan -> planIntent()
             R.id.member_nodes -> Intent(this, XboardNodesActivity::class.java)
             R.id.member_traffic -> Intent(this, XboardTrafficActivity::class.java)
-            R.id.member_docs -> XboardMemberWebActivity.intent(this, XboardMemberWebActivity.KNOWLEDGE)
-            R.id.member_tickets -> XboardMemberWebActivity.intent(this, XboardMemberWebActivity.TICKETS)
-            R.id.member_orders -> XboardMemberWebActivity.intent(this, XboardMemberWebActivity.ORDERS)
-            R.id.member_invite -> XboardMemberWebActivity.intent(this, XboardMemberWebActivity.INVITE)
-            R.id.member_settings -> XboardMemberWebActivity.intent(this, XboardMemberWebActivity.PROFILE)
+            R.id.member_docs -> XboardMemberPageActivity.intent(this, XboardMemberPageActivity.KNOWLEDGE)
+            R.id.member_tickets -> XboardMemberPageActivity.intent(this, XboardMemberPageActivity.TICKETS)
+            R.id.member_orders -> XboardMemberPageActivity.intent(this, XboardMemberPageActivity.ORDERS)
+            R.id.member_invite -> XboardMemberPageActivity.intent(this, XboardMemberPageActivity.INVITE)
+            R.id.member_settings -> XboardMemberPageActivity.intent(this, XboardMemberPageActivity.PROFILE)
             else -> return
         }
         returningFromSettings = id == R.id.member_settings

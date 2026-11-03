@@ -85,7 +85,7 @@
             android:exported="false"
             android:label="@string/xb_member_center" />
         <activity
-            android:name=".XboardMemberWebActivity"
+            android:name=".XboardMemberPageActivity"
             android:exported="false"
             android:label="@string/xb_member_center"
             android:windowSoftInputMode="adjustResize" />

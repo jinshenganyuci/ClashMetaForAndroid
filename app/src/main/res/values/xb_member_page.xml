@@ -1,0 +1,28 @@
+<resources>
+    <string name="xb_page_error">Could not complete the request. Check the network and refresh to see the latest status.</string>
+    <string name="xb_orders_empty">No orders yet.</string>
+    <string name="xb_order_detail">Order details</string>
+    <string name="xb_order_number">Order number　%1$s</string>
+    <string name="xb_order_status_field">Status　%1$s</string>
+    <string name="xb_order_amount">Order amount　%1$s</string>
+    <string name="xb_order_created">Created　%1$s</string>
+    <string name="xb_order_period">Period　%1$s</string>
+    <string name="xb_order_unknown">Unknown</string>
+    <string-array name="xb_order_states">
+        <item>Unpaid</item>
+        <item>Processing</item>
+        <item>Cancelled</item>
+        <item>Completed</item>
+        <item>Credited</item>
+    </string-array>
+    <string-array name="xb_order_periods">
+        <item>Monthly</item>
+        <item>Quarterly</item>
+        <item>Semiannual</item>
+        <item>Annual</item>
+        <item>Two years</item>
+        <item>Three years</item>
+        <item>One-time</item>
+        <item>Traffic reset</item>
+    </string-array>
+</resources>

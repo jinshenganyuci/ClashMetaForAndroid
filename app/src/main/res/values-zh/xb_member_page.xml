@@ -1,0 +1,28 @@
+<resources>
+    <string name="xb_page_error">请求未完成，请检查网络并刷新查看最新状态。</string>
+    <string name="xb_orders_empty">暂无订单。</string>
+    <string name="xb_order_detail">订单详情</string>
+    <string name="xb_order_number">订单号　%1$s</string>
+    <string name="xb_order_status_field">订单状态　%1$s</string>
+    <string name="xb_order_amount">订单金额　%1$s</string>
+    <string name="xb_order_created">创建时间　%1$s</string>
+    <string name="xb_order_period">周期　%1$s</string>
+    <string name="xb_order_unknown">未知</string>
+    <string-array name="xb_order_states">
+        <item>待支付</item>
+        <item>开通中</item>
+        <item>已取消</item>
+        <item>已完成</item>
+        <item>已折抵</item>
+    </string-array>
+    <string-array name="xb_order_periods">
+        <item>月付</item>
+        <item>季付</item>
+        <item>半年付</item>
+        <item>年付</item>
+        <item>两年付</item>
+        <item>三年付</item>
+        <item>一次性</item>
+        <item>流量重置</item>
+    </string-array>
+</resources>
