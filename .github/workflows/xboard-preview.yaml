@@ -76,13 +76,13 @@ jobs:
           test "${#apk[@]}" -eq 1
           tools_dir=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
           "$tools_dir/aapt" dump badging "${apk[0]}" > "$RUNNER_TEMP/badging.txt"
-          grep -F "package: name='im.iil.ikun.clashpreview' versionCode='211037' versionName='2.11.36-preview.2'" "$RUNNER_TEMP/badging.txt"
+          grep -F "package: name='im.iil.ikun.clashpreview' versionCode='211038' versionName='2.11.36-preview.3'" "$RUNNER_TEMP/badging.txt"
           grep -Fx "native-code: 'arm64-v8a'" "$RUNNER_TEMP/badging.txt"
           "$tools_dir/apksigner" verify --verbose --print-certs "${apk[0]}" > "$RUNNER_TEMP/signature.txt"
           grep -Fx 'Number of signers: 1' "$RUNNER_TEMP/signature.txt"
           grep -Fi 'certificate SHA-256 digest: 835aafbfc4970c9f2ce5d8f3bcb7dd2f464b7e70d2ff878f70b9ee63a3125f62' "$RUNNER_TEMP/signature.txt"
           mkdir -p dist
-          cp "${apk[0]}" dist/IKUN-Xboard-preview-arm64-v8a.apk
+          cp "${apk[0]}" dist/IKUN-Xboard-preview.3-arm64-v8a.apk
           cd dist && sha256sum *.apk > SHA256SUMS
 
       - uses: actions/upload-artifact@v7
