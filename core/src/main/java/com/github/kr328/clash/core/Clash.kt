@@ -137,6 +137,7 @@ object Clash {
         path: File,
         url: String,
         force: Boolean,
+        managed: Boolean = false,
         reportStatus: (FetchStatus) -> Unit
     ): CompletableDeferred<Unit> {
         return CompletableDeferred<Unit>().apply {
@@ -160,7 +161,8 @@ object Clash {
                 },
                 path.absolutePath,
                 url,
-                force
+                force,
+                managed
             )
         }
     }

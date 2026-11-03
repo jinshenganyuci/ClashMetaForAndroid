@@ -24,11 +24,11 @@ type ageKeyPair struct {
 }
 
 //export fetchAndValid
-func fetchAndValid(callback unsafe.Pointer, path, url C.c_string, force C.int) {
+func fetchAndValid(callback unsafe.Pointer, path, url C.c_string, force, managed C.int) {
 	go func(path, url string, callback unsafe.Pointer) {
 		cb := &remoteValidCallback{callback: callback}
 
-		err := config.FetchAndValid(path, url, force != 0, cb.reportStatus)
+		err := config.FetchAndValid(path, url, force != 0, managed != 0, cb.reportStatus)
 
 		C.fetch_complete(callback, marshalString(err))
 

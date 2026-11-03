@@ -1,11 +1,13 @@
 package com.github.kr328.clash.service
 
 import android.content.Context
+import android.net.Uri
 import com.github.kr328.clash.service.data.Database
 import com.github.kr328.clash.service.data.ImportedDao
 import com.github.kr328.clash.service.data.Pending
 import com.github.kr328.clash.service.data.PendingDao
 import com.github.kr328.clash.service.model.Profile
+import com.github.kr328.clash.service.model.XboardProfile
 import com.github.kr328.clash.service.remote.IFetchObserver
 import com.github.kr328.clash.service.remote.IProfileManager
 import com.github.kr328.clash.service.store.ServiceStore
@@ -17,6 +19,7 @@ import com.github.kr328.clash.service.util.sendProfileChanged
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.FileNotFoundException
 import java.util.*
@@ -34,7 +37,10 @@ class ProfileManager(private val context: Context) : IProfileManager,
     }
 
     override suspend fun create(type: Profile.Type, name: String, source: String, ageSecretKey: String?): UUID {
-        val uuid = generateProfileUUID()
+        return createPending(generateProfileUUID(), type, name, source, ageSecretKey)
+    }
+
+    private suspend fun createPending(uuid: UUID, type: Profile.Type, name: String, source: String, ageSecretKey: String?): UUID {
         val pending = Pending(
             uuid = uuid,
             name = name,
@@ -60,6 +66,30 @@ class ProfileManager(private val context: Context) : IProfileManager,
         }
 
         return uuid
+    }
+
+    override suspend fun syncXboard(source: String, name: String, activate: Boolean): Boolean = XboardProfile.lock.withLock {
+        val uri = Uri.parse(source)
+        require(uri.scheme.equals("https", ignoreCase = true) && !uri.host.isNullOrBlank() && uri.userInfo == null) {
+            "Invalid account subscription address"
+        }
+        val id = XboardProfile.id
+        val imported = ImportedDao().queryByUUID(id)
+        // Discard a draft left by a previous interrupted import; preserve the committed profile.
+        if (PendingDao().exists(id)) release(id)
+        try {
+            if (imported == null) {
+                createPending(id, Profile.Type.Url, name, source, null)
+            } else {
+                patch(id, imported.name, source, imported.interval, null)
+            }
+            commit(id)
+            if (activate) ProfileProcessor.active(context, id)
+            true
+        } catch (e: Exception) {
+            release(id)
+            if (e.message == XboardProfile.unavailable) false else throw e
+        }
     }
 
     override suspend fun clone(uuid: UUID): UUID {
@@ -142,6 +172,14 @@ class ProfileManager(private val context: Context) : IProfileManager,
     }
 
     override suspend fun delete(uuid: UUID) {
+        if (uuid == XboardProfile.id) {
+            XboardProfile.lock.withLock { deleteProfile(uuid) }
+        } else {
+            deleteProfile(uuid)
+        }
+    }
+
+    private suspend fun deleteProfile(uuid: UUID) {
         ImportedDao().queryByUUID(uuid)?.also {
             ProfileReceiver.cancelNext(context, it)
         }

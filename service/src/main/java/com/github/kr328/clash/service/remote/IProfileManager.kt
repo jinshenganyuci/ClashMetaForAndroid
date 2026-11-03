@@ -17,4 +17,5 @@ interface IProfileManager {
     suspend fun queryAll(): List<Profile>
     suspend fun queryActive(): Profile?
     suspend fun setActive(profile: Profile)
+    suspend fun syncXboard(source: String, name: String, activate: Boolean): Boolean
 }

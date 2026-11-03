@@ -1,8 +1,10 @@
 package com.github.kr328.clash.service
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import com.github.kr328.clash.common.log.Log
+import com.github.kr328.clash.common.constants.Intents
 import com.github.kr328.clash.core.Clash
 import com.github.kr328.clash.core.model.FetchStatus
 import com.github.kr328.clash.service.data.Imported
@@ -10,12 +12,14 @@ import com.github.kr328.clash.service.data.ImportedDao
 import com.github.kr328.clash.service.data.Pending
 import com.github.kr328.clash.service.data.PendingDao
 import com.github.kr328.clash.service.model.Profile
+import com.github.kr328.clash.service.model.XboardProfile
 import com.github.kr328.clash.service.remote.IFetchObserver
 import com.github.kr328.clash.service.store.ServiceStore
 import com.github.kr328.clash.service.util.importedDir
 import com.github.kr328.clash.service.util.pendingDir
 import com.github.kr328.clash.service.util.processingDir
 import com.github.kr328.clash.service.util.sendProfileChanged
+import com.github.kr328.clash.service.util.sendBroadcastSelf
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -27,9 +31,19 @@ object ProfileProcessor {
     private val profileLock = Mutex()
     private val processLock = Mutex()
 
+    private suspend fun process(context: Context, uuid: UUID, block: suspend () -> Unit) {
+        processLock.withLock {
+            try {
+                block()
+            } finally {
+                if (uuid == XboardProfile.id) context.processingDir.deleteRecursively()
+            }
+        }
+    }
+
     suspend fun apply(context: Context, uuid: UUID, callback: IFetchObserver? = null) {
         withContext(NonCancellable) {
-            processLock.withLock {
+            process(context, uuid) {
                 val snapshot = profileLock.withLock {
                     val pending =
                         PendingDao().queryByUUID(uuid) ?: throw IllegalArgumentException("profile $uuid not found")
@@ -48,7 +62,7 @@ object ProfileProcessor {
                 Clash.setAgeSecretKey(snapshot.ageSecretKey?.takeIf { it.isNotBlank() })
 
                 val force = snapshot.type != Profile.Type.File
-                val subscriptionInfo = fetchProfile(context, snapshot.source, force, callback)
+                val subscriptionInfo = fetchProfile(context, uuid, snapshot.source, force, callback)
 
                 profileLock.withLock {
                     if (PendingDao().queryByUUID(snapshot.uuid) == snapshot) {
@@ -91,7 +105,7 @@ object ProfileProcessor {
 
     suspend fun update(context: Context, uuid: UUID, callback: IFetchObserver?) {
         withContext(NonCancellable) {
-            processLock.withLock {
+            process(context, uuid) {
                 val snapshot = profileLock.withLock {
                     val imported =
                         ImportedDao().queryByUUID(uuid) ?: throw IllegalArgumentException("profile $uuid not found")
@@ -107,7 +121,7 @@ object ProfileProcessor {
 
                 Clash.setAgeSecretKey(snapshot.ageSecretKey?.takeIf { it.isNotBlank() })
 
-                val subscriptionInfo = fetchProfile(context, snapshot.source, true, callback)
+                val subscriptionInfo = fetchProfile(context, uuid, snapshot.source, true, callback)
 
                 profileLock.withLock {
                     val imported = ImportedDao().queryByUUID(snapshot.uuid)
@@ -116,13 +130,13 @@ object ProfileProcessor {
                         context.processingDir.copyRecursively(context.importedDir.resolve(snapshot.uuid.toString()))
 
                         val upload = subscriptionInfo?.subUpload
-                        if (upload != null) {
+                        if (upload != null || uuid == XboardProfile.id) {
                             ImportedDao().update(
                                 imported.copy(
-                                    upload = upload,
-                                    download = subscriptionInfo.subDownload ?: 0,
-                                    total = subscriptionInfo.subTotal ?: 0,
-                                    expire = subscriptionInfo.subExpire ?: 0,
+                                    upload = upload ?: 0,
+                                    download = subscriptionInfo?.subDownload ?: 0,
+                                    total = subscriptionInfo?.subTotal ?: 0,
+                                    expire = subscriptionInfo?.subExpire ?: 0,
                                 )
                             )
                         }
@@ -136,6 +150,7 @@ object ProfileProcessor {
 
     private suspend fun fetchProfile(
         context: Context,
+        uuid: UUID,
         source: String,
         force: Boolean,
         callback: IFetchObserver?,
@@ -143,7 +158,8 @@ object ProfileProcessor {
         var subscriptionInfo: FetchStatus? = null
         var cb = callback
 
-        Clash.fetchAndValid(context.processingDir, source, force) {
+        val managed = uuid == XboardProfile.id
+        val result = Clash.fetchAndValid(context.processingDir, source, force, managed) {
             if (it.action == FetchStatus.Action.SubscriptionInfo) {
                 subscriptionInfo = it
                 return@fetchAndValid
@@ -156,7 +172,19 @@ object ProfileProcessor {
 
                 Log.w("Report fetch status: $e", e)
             }
-        }.await()
+        }
+        try {
+            result.await()
+        } catch (e: Exception) {
+            if (!managed) throw e
+            if (e.message == XboardProfile.unavailable) {
+                ImportedDao().queryByUUID(uuid)?.let { ProfileReceiver.cancelNext(context, it) }
+                delete(context, uuid)
+                throw IllegalStateException(XboardProfile.unavailable)
+            }
+            // Native network and YAML errors can include the signed URL or proxy credentials.
+            throw IllegalStateException("Account subscription update failed")
+        }
 
         return subscriptionInfo
     }
@@ -164,6 +192,13 @@ object ProfileProcessor {
     suspend fun delete(context: Context, uuid: UUID) {
         withContext(NonCancellable) {
             profileLock.withLock {
+                if (uuid == XboardProfile.id) {
+                    val store = ServiceStore(context)
+                    if (store.activeProfile == uuid) {
+                        store.activeProfile = null
+                        context.sendBroadcastSelf(Intent(Intents.ACTION_CLASH_REQUEST_STOP))
+                    }
+                }
                 ImportedDao().remove(uuid)
                 PendingDao().remove(uuid)
 

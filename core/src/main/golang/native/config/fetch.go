@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -38,11 +39,22 @@ type fetchHeader struct {
 	ProfileUpdateInterval string
 }
 
-func openUrl(ctx context.Context, url string) (io.ReadCloser, fetchHeader, error) {
+// Only the first-party profile has a contract in which these responses revoke
+// the cached configuration. Generic subscription downloads keep their behavior.
+var errManagedUnavailable = errors.New("XBOARD_PROFILE_UNAVAILABLE")
+
+func openUrl(ctx context.Context, url string, managed bool) (io.ReadCloser, fetchHeader, error) {
 	response, err := clashHttp.HttpRequest(ctx, url, http.MethodGet, http.Header{"User-Agent": {"ClashMetaForAndroid/" + app.VersionName()}}, nil)
 
 	if err != nil {
 		return nil, fetchHeader{}, err
+	}
+	if managed && (response.StatusCode < 200 || response.StatusCode >= 300) {
+		response.Body.Close()
+		if response.StatusCode == http.StatusForbidden || response.StatusCode == http.StatusUnauthorized {
+			return nil, fetchHeader{}, errManagedUnavailable
+		}
+		return nil, fetchHeader{}, fmt.Errorf("subscription returned HTTP %d", response.StatusCode)
 	}
 
 	return response.Body, fetchHeader{
@@ -55,7 +67,7 @@ func openContent(url string) (io.ReadCloser, error) {
 	return app.OpenContent(url)
 }
 
-func fetch(url *U.URL, file string) (fetchHeader, error) {
+func fetch(url *U.URL, file string, managed bool) (fetchHeader, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -65,7 +77,7 @@ func fetch(url *U.URL, file string) (fetchHeader, error) {
 
 	switch url.Scheme {
 	case "http", "https":
-		reader, header, err = openUrl(ctx, url.String())
+		reader, header, err = openUrl(ctx, url.String(), managed)
 	case "content":
 		reader, err = openContent(url.String())
 	default:
@@ -152,6 +164,7 @@ func FetchAndValid(
 	path string,
 	url string,
 	force bool,
+	managed bool,
 	reportStatus func(string),
 ) error {
 	configPath := P.Join(path, "config.yaml")
@@ -171,7 +184,7 @@ func FetchAndValid(
 
 		reportStatus(string(bytes))
 
-		header, err := fetch(url, configPath)
+		header, err := fetch(url, configPath, managed)
 		if err != nil {
 			return err
 		}
@@ -181,7 +194,7 @@ func FetchAndValid(
 
 	defer runtime.GC()
 
-	rawCfg, err := UnmarshalAndPatch(path)
+	rawCfg, err := UnmarshalAndPatch(path, managed)
 	if err != nil {
 		return err
 	}
@@ -235,7 +248,7 @@ func FetchAndValid(
 			}
 		}
 
-		_, _ = fetch(url, ps)
+		_, _ = fetch(url, ps, false)
 	})
 
 	bytes, _ := json.Marshal(&Status{

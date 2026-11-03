@@ -16,9 +16,11 @@ import com.github.kr328.clash.common.id.UndefinedIds
 import com.github.kr328.clash.common.util.setUUID
 import com.github.kr328.clash.common.util.uuid
 import com.github.kr328.clash.service.data.ImportedDao
+import com.github.kr328.clash.service.model.XboardProfile
 import com.github.kr328.clash.service.util.sendProfileUpdateCompleted
 import com.github.kr328.clash.service.util.sendProfileUpdateFailed
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.withLock
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -80,6 +82,14 @@ class ProfileWorker : BaseService() {
     }
 
     private suspend fun run(uuid: UUID) {
+        if (uuid == XboardProfile.id) {
+            XboardProfile.lock.withLock { updateProfile(uuid) }
+        } else {
+            updateProfile(uuid)
+        }
+    }
+
+    private suspend fun updateProfile(uuid: UUID) {
         val imported = ImportedDao().queryByUUID(uuid) ?: return
 
         try {
@@ -92,6 +102,9 @@ class ProfileWorker : BaseService() {
             ProfileReceiver.scheduleNext(this, imported)
         } catch (e: Exception) {
             failed(imported.uuid, imported.name, e.message ?: "Unknown")
+            if (uuid == XboardProfile.id && ImportedDao().exists(uuid)) {
+                ProfileReceiver.scheduleNext(this, imported, retry = true)
+            }
         }
     }
 

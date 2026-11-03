@@ -76,7 +76,7 @@ class ProfileReceiver : BroadcastReceiver() {
             intent.send(context, 0, null)
         }
 
-        fun scheduleNext(context: Context, imported: Imported) {
+        fun scheduleNext(context: Context, imported: Imported, retry: Boolean = false) {
             val intent = pendingIntentOf(context, imported)
 
             context.getSystemService<AlarmManager>()?.cancel(intent)
@@ -94,7 +94,8 @@ class ProfileReceiver : BroadcastReceiver() {
             if (last < 0)
                 return
 
-            val interval = (imported.interval - (current - last)).coerceAtLeast(0)
+            val interval = if (retry) TimeUnit.MINUTES.toMillis(15)
+            else (imported.interval - (current - last)).coerceAtLeast(0)
 
             context.getSystemService<AlarmManager>()
                 ?.set(AlarmManager.RTC, current + interval, intent)

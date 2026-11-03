@@ -29,7 +29,7 @@ func logDns(cfg *config.RawConfig) {
 	}
 }
 
-func UnmarshalAndPatch(profilePath string) (*config.RawConfig, error) {
+func UnmarshalAndPatch(profilePath string, managed bool) (*config.RawConfig, error) {
 	configPath := P.Join(profilePath, "config.yaml")
 
 	configData, err := os.ReadFile(configPath)
@@ -40,6 +40,11 @@ func UnmarshalAndPatch(profilePath string) (*config.RawConfig, error) {
 	rawConfig, err := config.UnmarshalRawConfig(configData)
 	if err != nil {
 		return nil, err
+	}
+	// Inspect the actual subscription before user overrides can change its mode.
+	if managed && len(rawConfig.Proxy) == 0 && len(rawConfig.ProxyProvider) == 0 &&
+		len(rawConfig.ProxyGroup) == 0 && len(rawConfig.Rule) == 1 && rawConfig.Rule[0] == "MATCH,REJECT" {
+		return nil, errManagedUnavailable
 	}
 
 	if err := process(rawConfig, profilePath); err != nil {
@@ -59,7 +64,7 @@ func Parse(rawConfig *config.RawConfig) (*config.Config, error) {
 }
 
 func Load(path string) error {
-	rawCfg, err := UnmarshalAndPatch(path)
+	rawCfg, err := UnmarshalAndPatch(path, false)
 	if err != nil {
 		log.Errorln("Load %s: %s", path, err.Error())
 
