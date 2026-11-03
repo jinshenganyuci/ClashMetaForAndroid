@@ -3,4 +3,5 @@
     <string name="xboard_account">我的套餐</string>
     <string name="xboard_account_hint">登录 Xboard 或管理订阅</string>
     <string name="xb_nodes_title">节点状态</string>
+    <string name="xb_nodes_summary">查看在线状态和流量倍率</string>
 </resources>
