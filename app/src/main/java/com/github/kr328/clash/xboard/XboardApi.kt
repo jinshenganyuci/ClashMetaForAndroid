@@ -12,6 +12,37 @@ import javax.net.ssl.HttpsURLConnection
 
 class XboardSessionExpiredException : IOException("登录已失效，请重新登录")
 
+data class XboardNode(
+    val name: String,
+    val type: String?,
+    val online: Boolean?,
+    val rate: Double?,
+    val tags: List<String>,
+    val external: Boolean,
+    val lastCheckAt: Long?,
+) {
+    internal companion object {
+        fun fromJson(json: JSONObject): XboardNode {
+            val tags = json.optJSONArray("tags")
+            return XboardNode(
+                name = json.getString("name"),
+                type = (json.opt("type") as? String)?.takeIf { it.isNotBlank() },
+                online = when (json.opt("is_online")?.toString()) {
+                    "1", "true" -> true
+                    "0", "false" -> false
+                    else -> null
+                },
+                rate = json.opt("rate")?.toString()?.toDoubleOrNull()?.takeIf { it.isFinite() && it >= 0 },
+                tags = if (tags == null) emptyList() else (0 until tags.length()).mapNotNull {
+                    (tags.opt(it) as? String)?.takeIf { tag -> tag.isNotBlank() }
+                },
+                external = json.optBoolean("external", false),
+                lastCheckAt = json.optLong("last_check_at").takeIf { it > 0 },
+            )
+        }
+    }
+}
+
 data class XboardSubscription(
     val planId: Int?,
     val planName: String?,
@@ -101,6 +132,16 @@ object XboardApi {
         }
     }
 
+    suspend fun nodes(bearer: String): List<XboardNode> = withContext(Dispatchers.IO) {
+        val response = request("/user/server/fetch", bearer = bearer, maxResponseChars = 8 * 1024 * 1024)
+        try {
+            val rows = response.getJSONArray("data")
+            List(rows.length()) { XboardNode.fromJson(rows.getJSONObject(it)) }
+        } catch (_: JSONException) {
+            throw IOException("面板返回的节点列表格式无效")
+        }
+    }
+
     private fun data(response: JSONObject): JSONObject =
         response.optJSONObject("data") ?: throw IOException("面板未返回有效的数据")
 
@@ -112,7 +153,7 @@ object XboardApi {
         return bearer
     }
 
-    private fun request(path: String, bearer: String? = null, body: JSONObject? = null): JSONObject {
+    private fun request(path: String, bearer: String? = null, body: JSONObject? = null, maxResponseChars: Int = 256 * 1024): JSONObject {
         val connection = URL(API + path).openConnection() as HttpsURLConnection
         try {
             // Keep credentials on the configured origin, including POST bodies on 307/308.
@@ -152,7 +193,7 @@ object XboardApi {
                 }
                 throw IOException(message)
             }
-            val response = JSONObject(readBody(connection.inputStream))
+            val response = JSONObject(readBody(connection.inputStream, maxResponseChars))
             if (response.optString("status") == "fail" && (path == REGISTER || path == SEND_CODE)) {
                 throw registrationFailure(400, response, path == REGISTER)
             }
@@ -164,14 +205,14 @@ object XboardApi {
         }
     }
 
-    private fun readBody(stream: InputStream): String {
+    private fun readBody(stream: InputStream, maxChars: Int = 256 * 1024): String {
         return stream.bufferedReader(Charsets.UTF_8).use { reader ->
             val text = StringBuilder()
             val buffer = CharArray(4096)
             while (true) {
                 val count = reader.read(buffer)
                 if (count < 0) break
-                if (text.length + count > 256 * 1024) throw IOException("面板响应过大")
+                if (text.length + count > maxChars) throw IOException("面板响应过大")
                 text.append(buffer, 0, count)
             }
             text.toString()

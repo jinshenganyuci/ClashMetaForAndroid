@@ -1,0 +1,5 @@
+<resources>
+    <color name="xb_nodes_online_dot">#217047</color>
+    <color name="xb_nodes_offline_dot">#AD392E</color>
+    <color name="xb_nodes_neutral_dot">#697178</color>
+</resources>

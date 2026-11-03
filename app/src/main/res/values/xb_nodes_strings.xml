@@ -1,0 +1,20 @@
+<resources>
+    <string name="xb_nodes_back">Back</string>
+    <string name="xb_nodes_refresh">Refresh</string>
+    <string name="xb_nodes_sign_in">Sign in</string>
+    <string name="xb_nodes_loading">Loading node status…</string>
+    <string name="xb_nodes_requires_account">Sign in to see the nodes available to your account.</string>
+    <string name="xb_nodes_empty">There are no nodes available to this account.</string>
+    <string name="xb_nodes_failed">Could not load node status. Check your connection and tap Refresh.</string>
+    <string name="xb_nodes_online">Online</string>
+    <string name="xb_nodes_offline">Offline</string>
+    <string name="xb_nodes_unknown">Unknown</string>
+    <string name="xb_nodes_external">Third-party</string>
+    <string name="xb_nodes_rate">Traffic rate %1$s×</string>
+    <string name="xb_nodes_tags">Tags: %1$s</string>
+    <string name="xb_nodes_checked">Last check: %1$s</string>
+    <plurals name="xb_nodes_count">
+        <item quantity="one">%d node · Status reflects the last five minutes.</item>
+        <item quantity="other">%d nodes · Status reflects the last five minutes.</item>
+    </plurals>
+</resources>
