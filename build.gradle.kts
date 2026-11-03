@@ -28,6 +28,12 @@ subprojects {
     }
 
     val isApp = name == "app"
+    val arm64Preview = providers.gradleProperty("xboard.arm64Preview").orNull == "true"
+    val buildAbis = if (arm64Preview) {
+        arrayOf("arm64-v8a")
+    } else {
+        arrayOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+    }
 
     apply(plugin = if (isApp) "com.android.application" else "com.android.library")
 
@@ -58,19 +64,19 @@ subprojects {
             minSdk = 21
             targetSdk = 35
 
-            versionName = "2.11.36"
-            versionCode = 211036
+            versionName = if (arm64Preview) "2.11.36-preview.2" else "2.11.36"
+            versionCode = if (arm64Preview) 211037 else 211036
 
             resValue("string", "release_name", "v$versionName")
             resValue("integer", "release_code", "$versionCode")
 
             ndk {
-                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+                abiFilters += buildAbis
             }
 
             externalNativeBuild {
                 cmake {
-                    abiFilters("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+                    abiFilters(*buildAbis)
                 }
             }
 
@@ -185,10 +191,10 @@ subprojects {
 
             splits {
                 abi {
-                    isEnable = true
-                    isUniversalApk = true
+                    isEnable = !arm64Preview
+                    isUniversalApk = !arm64Preview
                     reset()
-                    include("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+                    include(*buildAbis)
                 }
             }
         }
