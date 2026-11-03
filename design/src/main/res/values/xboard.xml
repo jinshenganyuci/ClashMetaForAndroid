@@ -1,4 +1,5 @@
 <resources>
+    <string name="xboard_app_name">IKUN Clash</string>
     <string name="xboard_account">Xboard account</string>
     <string name="xboard_account_hint">Sign in and manage your subscription</string>
 </resources>
