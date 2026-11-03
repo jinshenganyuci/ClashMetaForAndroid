@@ -1,0 +1,12 @@
+<resources>
+    <item name="xb_member_web_page" type="id"/>
+    <string name="xb_web_knowledge">Documentation</string>
+    <string name="xb_web_order">My orders</string>
+    <string name="xb_web_invite">My invitations</string>
+    <string name="xb_web_ticket">Support tickets</string>
+    <string name="xb_web_profile">Account settings</string>
+    <string name="xb_web_loading">Opening your member page…</string>
+    <string name="xb_web_no_docs">No documentation available.</string>
+    <string name="xb_web_signed_out">Sign in to open your member page.</string>
+    <string name="xb_web_unavailable">Could not load the member page. Check your connection and try again.</string>
+</resources>

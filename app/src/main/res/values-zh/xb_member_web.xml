@@ -1,0 +1,11 @@
+<resources>
+    <string name="xb_web_knowledge">使用文档</string>
+    <string name="xb_web_order">我的订单</string>
+    <string name="xb_web_invite">我的邀请</string>
+    <string name="xb_web_ticket">我的工单</string>
+    <string name="xb_web_profile">个人中心</string>
+    <string name="xb_web_loading">正在打开会员页面…</string>
+    <string name="xb_web_no_docs">暂无使用文档</string>
+    <string name="xb_web_signed_out">请先登录以查看会员页面。</string>
+    <string name="xb_web_unavailable">会员页面加载失败，请检查网络后重试。</string>
+</resources>

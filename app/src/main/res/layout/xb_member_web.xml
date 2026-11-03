@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/xb_member_web_root" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="56dp"
+        android:gravity="center_vertical" android:paddingStart="8dp" android:paddingEnd="16dp">
+        <ImageButton android:id="@+id/xb_member_web_back" android:layout_width="48dp"
+            android:layout_height="48dp" android:src="@drawable/ic_baseline_arrow_back"
+            android:tint="?attr/colorOnSurface" android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/xb_nodes_back"/>
+        <TextView android:id="@+id/xb_member_web_title" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="8dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
+    </LinearLayout>
+    <LinearLayout android:id="@+id/xb_member_web_placeholder" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+        <TextView android:id="@+id/xb_member_web_state" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:accessibilityLiveRegion="polite"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
+        <Button android:id="@+id/xb_member_web_retry" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_marginTop="12dp"
+            android:text="@string/xb_nodes_refresh" android:textAllCaps="false" android:visibility="gone"/>
+        <Button android:id="@+id/xb_member_web_signin" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_marginTop="12dp"
+            android:text="@string/xb_nodes_sign_in" android:textAllCaps="false" android:visibility="gone"/>
+    </LinearLayout>
+    <FrameLayout android:id="@+id/xb_member_web_frame" android:layout_width="match_parent"
+        android:layout_height="0dp" android:layout_weight="1"/>
+</LinearLayout>

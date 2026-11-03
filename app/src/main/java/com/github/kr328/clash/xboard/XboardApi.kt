@@ -90,6 +90,20 @@ object XboardApi {
     private const val REGISTER = "/passport/auth/register"
     private const val SEND_CODE = "/passport/comm/sendEmailVerify"
 
+    suspend fun memberWebSession(bearer: String, section: String): String = withContext(Dispatchers.IO) {
+        require(section in setOf("knowledge", "order", "invite", "ticket", "profile"))
+        val quick = request("/user/getQuickLoginUrl", bearer = bearer, body = JSONObject().put("redirect", "/$section"))
+        val uri = try { URI(quick.optString("data")) } catch (_: java.net.URISyntaxException) { null }
+        val verify = uri?.takeIf {
+            it.scheme == "https" && it.host.equals("ikun.iil.im", true) && it.port in setOf(-1, 443) &&
+                it.userInfo == null && it.path == "/" && it.rawQuery == null
+        }?.fragment?.let {
+            Regex("/login\\?verify=([A-Za-z0-9_-]{16,128})&redirect=/$section").matchEntire(it)?.groupValues?.get(1)
+        } ?: throw IOException("无效的会员页面登录地址")
+        // Redeem the short-lived code on our fixed API origin. The real URL never enters WebView history.
+        authData(request("/passport/auth/token2Login?verify=$verify"))
+    }
+
     suspend fun login(email: String, password: String): String = withContext(Dispatchers.IO) {
         val body = JSONObject().put("email", email.trim()).put("password", password)
         authData(request("/passport/auth/login", body = body))
