@@ -1,6 +1,11 @@
 package com.github.kr328.clash
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.PersistableBundle
 import android.os.Bundle
 import android.text.format.Formatter
 import android.view.View
@@ -31,11 +36,17 @@ class XboardAccountActivity : AppCompatActivity() {
     private val email by lazy { findViewById<EditText>(R.id.account_email) }
     private val password by lazy { findViewById<EditText>(R.id.account_password) }
     private val primary by lazy { findViewById<Button>(R.id.account_primary) }
+    private val copySubscription by lazy { findViewById<Button>(R.id.account_copy_subscription) }
+    private val nodes by lazy { findViewById<Button>(R.id.account_nodes) }
     private val logout by lazy { findViewById<Button>(R.id.account_logout) }
     private val status by lazy { findViewById<TextView>(R.id.account_status) }
     private var binding: XboardBinding? = null
     private var busy = false
     private var refreshNewAccount = false
+
+    private val nodeStatus = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        perform { render(account.cached()) }
+    }
 
     private val registration = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {
@@ -65,6 +76,8 @@ class XboardAccountActivity : AppCompatActivity() {
                 .putExtra("email", email.text.toString().trim()))
         }
         primary.setOnClickListener { submit() }
+        copySubscription.setOnClickListener { copySubscriptionUrl() }
+        nodes.setOnClickListener { nodeStatus.launch(Intent(this, XboardNodesActivity::class.java)) }
         password.setOnEditorActionListener { _, action, _ ->
             if (action == EditorInfo.IME_ACTION_DONE) { submit(); true } else false
         }
@@ -77,6 +90,25 @@ class XboardAccountActivity : AppCompatActivity() {
                 }.show()
         }
         perform { render(account.cached()) }
+    }
+
+    private fun copySubscriptionUrl() {
+        perform {
+            status.setText(R.string.xb_fetching_subscription_link)
+            val latest = account.latestMembership()
+            render(latest)
+            val subscription = latest?.subscription ?: return@perform
+            if (subscription.planId == null || subscription.isExpired()) return@perform
+            val clip = ClipData.newPlainText(getString(R.string.xb_copy_subscription), subscription.subscribeUrl)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                // Hide the member's subscription token in compatible clipboard previews.
+                clip.description.extras = PersistableBundle().apply {
+                    putBoolean("android.content.extra.IS_SENSITIVE", true)
+                }
+            }
+            (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(clip)
+            status.setText(R.string.xb_subscription_copied)
+        }
     }
 
     private fun finishRegistration() {
@@ -144,6 +176,8 @@ class XboardAccountActivity : AppCompatActivity() {
         busy = value
         primary.isEnabled = !value
         logout.isEnabled = !value
+        nodes.isEnabled = !value
+        copySubscription.isEnabled = !value
         findViewById<Button>(R.id.account_register).isEnabled = !value
         email.isEnabled = !value
         password.isEnabled = !value
@@ -159,6 +193,10 @@ class XboardAccountActivity : AppCompatActivity() {
         val details = findViewById<TextView>(R.id.account_details)
         findViewById<View>(R.id.login_fields).visibility = if (signedIn) View.GONE else View.VISIBLE
         findViewById<Button>(R.id.account_register).visibility = if (signedIn) View.GONE else View.VISIBLE
+        nodes.visibility = if (signedIn) View.VISIBLE else View.GONE
+        copySubscription.visibility = if (signedIn && (sub == null || (sub.planId != null && !sub.isExpired()))) {
+            View.VISIBLE
+        } else View.GONE
         logout.visibility = if (signedIn) View.VISIBLE else View.GONE
         primary.setText(if (signedIn) R.string.xb_refresh else R.string.xb_submit)
         title.text = when {

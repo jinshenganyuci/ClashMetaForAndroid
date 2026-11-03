@@ -54,4 +54,7 @@
     <string name="xb_min_password">Use at least 8 characters</string>
     <string name="xb_password_mismatch">Passwords do not match</string>
     <string name="xb_invalid_code">Enter the 6-digit code from your email</string>
+    <string name="xb_copy_subscription">Copy subscription URL</string>
+    <string name="xb_fetching_subscription_link">Getting your subscription URL…</string>
+    <string name="xb_subscription_copied">Copied. Paste the URL into your computer or router client.</string>
 </resources>

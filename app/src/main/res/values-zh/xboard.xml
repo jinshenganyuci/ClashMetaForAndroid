@@ -54,4 +54,7 @@
     <string name="xb_min_password">密码至少需要 8 个字符</string>
     <string name="xb_password_mismatch">两次输入的密码不一致</string>
     <string name="xb_invalid_code">请输入邮件中的 6 位数字验证码</string>
+    <string name="xb_copy_subscription">复制订阅地址</string>
+    <string name="xb_fetching_subscription_link">正在获取订阅地址…</string>
+    <string name="xb_subscription_copied">已复制，可粘贴到电脑或软路由客户端。</string>
 </resources>

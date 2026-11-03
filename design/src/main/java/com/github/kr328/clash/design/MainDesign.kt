@@ -19,6 +19,7 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
         OpenProxy,
         OpenProfiles,
         OpenXboardAccount,
+        OpenXboardNodes,
         OpenProviders,
         OpenLogs,
         OpenSettings,

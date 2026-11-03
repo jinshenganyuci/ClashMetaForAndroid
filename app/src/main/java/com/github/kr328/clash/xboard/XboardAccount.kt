@@ -66,19 +66,36 @@ class XboardAccount(context: Context) {
         lock.withLock { clear() }
     }
 
+    suspend fun clearExpiredSession(bearer: String) = withContext(Dispatchers.IO) {
+        lock.withLock {
+            if (store.read()?.bearer == bearer) clear()
+        }
+    }
+
     private suspend fun clear() {
         profiles.remove()
         store.clear()
         checkedEmail = null
     }
 
-    private suspend fun sync(binding: XboardBinding, force: Boolean, activate: Boolean): XboardBinding {
-        val subscription = try {
+    // A panel may rotate subscription hosts or tokens independently of the imported profile.
+    suspend fun latestMembership(): XboardBinding? = withContext(Dispatchers.IO) {
+        lock.withLock {
+            val binding = store.read() ?: return@withLock null
+            binding.copy(subscription = fetchSubscription(binding))
+        }
+    }
+
+    private suspend fun fetchSubscription(binding: XboardBinding): XboardSubscription =
+        try {
             XboardApi.getSubscribe(binding.bearer)
         } catch (e: XboardSessionExpiredException) {
             clear()
             throw e
         }
+
+    private suspend fun sync(binding: XboardBinding, force: Boolean, activate: Boolean): XboardBinding {
+        val subscription = fetchSubscription(binding)
         val now = System.currentTimeMillis()
         var updated = binding.copy(subscription = subscription)
         if (subscription.planId == null || subscription.isExpired(now)) {

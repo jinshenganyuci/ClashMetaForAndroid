@@ -77,6 +77,10 @@
             android:label="@string/xb_create_account"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".XboardNodesActivity"
+            android:exported="false"
+            android:label="@string/xb_nodes_title" />
+        <activity
             android:name=".XboardAccountActivity"
             android:exported="false"
             android:label="@string/xb_plan"

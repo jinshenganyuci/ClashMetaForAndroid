@@ -112,6 +112,15 @@
                     app:subtext="@{accountSummary != null ? accountSummary : @string/xboard_account_hint}"
                     app:text="@string/xboard_account" />
 
+                <com.github.kr328.clash.design.view.LargeActionLabel
+                    android:id="@+id/xboard_nodes_entry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/main_label_margin_vertical"
+                    android:onClick="@{() -> self.request(Request.OpenXboardNodes)}"
+                    app:icon="@drawable/ic_baseline_dns"
+                    app:text="@string/xb_nodes_title" />
+
                 <com.github.kr328.clash.design.view.LargeActionCard
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
