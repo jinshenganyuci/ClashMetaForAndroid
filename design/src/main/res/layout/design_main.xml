@@ -103,23 +103,52 @@
                     app:subtext="@{mode}"
                     app:text="@string/proxy" />
 
-                <com.github.kr328.clash.design.view.LargeActionCard
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/xboard_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/main_card_margin_vertical"
-                    android:onClick="@{() -> self.request(Request.OpenXboardAccount)}"
-                    app:icon="@drawable/ic_baseline_cloud_download"
-                    app:subtext="@{accountSummary != null ? accountSummary : @string/xboard_account_hint}"
-                    app:text="@string/xboard_account" />
+                    android:clickable="false"
+                    android:clipToOutline="true"
+                    android:focusable="false"
+                    android:importantForAccessibility="no"
+                    app:cardBackgroundColor="?attr/colorSurface"
+                    app:cardCornerRadius="@dimen/large_action_card_radius"
+                    app:cardElevation="@dimen/large_action_card_elevation"
+                    app:strokeWidth="0dp">
 
-                <com.github.kr328.clash.design.view.LargeActionLabel
-                    android:id="@+id/xboard_nodes_entry"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/main_label_margin_vertical"
-                    android:onClick="@{() -> self.request(Request.OpenXboardNodes)}"
-                    app:icon="@drawable/ic_baseline_dns"
-                    app:text="@string/xb_nodes_title" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <com.github.kr328.clash.design.view.LargeActionLabel
+                            android:id="@+id/xboard_account_entry"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:onClick="@{() -> self.request(Request.OpenXboardAccount)}"
+                            app:icon="@drawable/ic_baseline_member_card"
+                            app:subtext="@{accountSummary != null ? accountSummary : @string/xboard_account_hint}"
+                            app:text="@string/xboard_account" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/divider_size"
+                            android:layout_marginStart="@dimen/large_item_header_layout_size"
+                            android:layout_marginEnd="@dimen/large_item_tailing_margin_horizontal"
+                            android:alpha="0.12"
+                            android:background="?attr/colorOnSurface"
+                            android:importantForAccessibility="no" />
+
+                        <com.github.kr328.clash.design.view.LargeActionLabel
+                            android:id="@+id/xboard_nodes_entry"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:onClick="@{() -> self.request(Request.OpenXboardNodes)}"
+                            app:icon="@drawable/ic_baseline_dns"
+                            app:text="@string/xb_nodes_title" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
                 <com.github.kr328.clash.design.view.LargeActionCard
                     android:layout_width="match_parent"
