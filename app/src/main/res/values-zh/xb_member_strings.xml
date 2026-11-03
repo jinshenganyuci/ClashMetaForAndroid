@@ -1,0 +1,21 @@
+<resources>
+    <string name="xb_back_to_member">返回会员中心</string>
+    <string name="xb_member_guest">登录查看套餐</string>
+    <string name="xb_member_guest_hint">使用会员账号登录或注册</string>
+    <string name="xb_member_plan_hint">查看套餐详情和订阅信息</string>
+    <string name="xb_member_no_plan_hint">点击查看订阅信息</string>
+    <string name="xb_member_usage">已用 %1$s GB / 共 %2$s GB</string>
+    <string name="xb_member_docs">使用文档</string>
+    <string name="xb_member_tickets">我的工单</string>
+    <string name="xb_member_orders">我的订单</string>
+    <string name="xb_member_invite">我的邀请</string>
+    <string name="xb_member_settings">账号设置</string>
+    <string name="xb_member_nodes_hint">在线状态与倍率</string>
+    <string name="xb_member_traffic_hint">每日用量与计费</string>
+    <string name="xb_member_docs_hint">搜索和阅读教程</string>
+    <string name="xb_member_tickets_hint">提交问题与查看回复</string>
+    <string name="xb_member_orders_hint">记录与详情</string>
+    <string name="xb_member_invite_hint">邀请码与佣金记录</string>
+    <string name="xb_member_settings_hint">钱包、密码与通知</string>
+    <string name="xb_member_load_failed">暂时无法刷新账号信息，可进入「我的套餐」重试。</string>
+</resources>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/member_hub" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:gravity="center_vertical" android:minHeight="56dp" android:paddingStart="8dp" android:paddingEnd="16dp">
+        <ImageButton android:id="@+id/member_back" android:layout_width="48dp" android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_baseline_arrow_back"
+            android:contentDescription="@string/xb_nodes_back" android:tint="?attr/colorOnSurface" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginStart="8dp" android:text="@string/xb_member_center"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+    </LinearLayout>
+
+    <ScrollView android:layout_width="match_parent" android:layout_height="match_parent" android:clipToPadding="false">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:clipToPadding="false" android:clipChildren="false"
+            android:paddingStart="16dp" android:paddingEnd="16dp" android:paddingTop="4dp" android:paddingBottom="20dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/member_plan" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:clickable="true" android:focusable="true" android:layout_margin="4dp"
+                app:cardBackgroundColor="?attr/colorSurface" app:cardCornerRadius="@dimen/large_action_card_radius"
+                app:cardElevation="3dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="18dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="@string/xb_plan" android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:textColor="?attr/colorPrimary" />
+                    <TextView android:id="@+id/member_plan_name" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_marginTop="6dp"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+                    <TextView android:id="@+id/member_expiry" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_marginTop="3dp"
+                        android:textColor="?android:attr/textColorSecondary" />
+                    <ProgressBar android:id="@+id/member_usage_bar" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_marginTop="10dp" android:max="1000"
+                        style="?android:attr/progressBarStyleHorizontal" android:indeterminate="false" android:visibility="gone" />
+                    <TextView android:id="@+id/member_usage" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_marginTop="3dp"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" android:visibility="gone"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <GridLayout android:id="@+id/member_grid" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:clipChildren="false" android:clipToPadding="false" android:layout_marginTop="4dp" />
+            <TextView android:id="@+id/member_message" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_margin="8dp" android:visibility="gone" android:accessibilityLiveRegion="polite" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

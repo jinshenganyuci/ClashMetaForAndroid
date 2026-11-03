@@ -51,10 +51,10 @@ class XboardAccount(context: Context) {
         return binding
     }
 
-    suspend fun refresh(force: Boolean): XboardBinding? = withContext(Dispatchers.IO) {
+    suspend fun refresh(force: Boolean, recheckMembership: Boolean = false): XboardBinding? = withContext(Dispatchers.IO) {
         lock.withLock {
             val binding = store.read() ?: return@withLock null
-            if (!force && checkedEmail == binding.email &&
+            if (!force && !recheckMembership && checkedEmail == binding.email &&
                 SystemClock.elapsedRealtime() - lastCheck < TimeUnit.MINUTES.toMillis(5)) {
                 return@withLock binding
             }

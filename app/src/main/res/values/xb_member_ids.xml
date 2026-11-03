@@ -1,0 +1,9 @@
+<resources>
+    <item type="id" name="member_nodes"/>
+    <item type="id" name="member_traffic"/>
+    <item type="id" name="member_docs"/>
+    <item type="id" name="member_tickets"/>
+    <item type="id" name="member_orders"/>
+    <item type="id" name="member_invite"/>
+    <item type="id" name="member_settings"/>
+</resources>

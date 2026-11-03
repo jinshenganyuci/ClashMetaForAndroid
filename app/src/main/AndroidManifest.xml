@@ -81,6 +81,19 @@
             android:exported="false"
             android:label="@string/xb_nodes_title" />
         <activity
+            android:name=".XboardMemberCenterActivity"
+            android:exported="false"
+            android:label="@string/xb_member_center" />
+        <activity
+            android:name=".XboardMemberWebActivity"
+            android:exported="false"
+            android:label="@string/xb_member_center"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".XboardTrafficActivity"
+            android:exported="false"
+            android:label="@string/xb_traffic_title" />
+        <activity
             android:name=".XboardAccountActivity"
             android:exported="false"
             android:label="@string/xb_plan"

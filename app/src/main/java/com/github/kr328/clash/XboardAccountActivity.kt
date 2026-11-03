@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.PersistableBundle
 import android.os.Bundle
-import android.text.format.Formatter
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -37,16 +36,11 @@ class XboardAccountActivity : AppCompatActivity() {
     private val password by lazy { findViewById<EditText>(R.id.account_password) }
     private val primary by lazy { findViewById<Button>(R.id.account_primary) }
     private val copySubscription by lazy { findViewById<Button>(R.id.account_copy_subscription) }
-    private val nodes by lazy { findViewById<Button>(R.id.account_nodes) }
     private val logout by lazy { findViewById<Button>(R.id.account_logout) }
     private val status by lazy { findViewById<TextView>(R.id.account_status) }
     private var binding: XboardBinding? = null
     private var busy = false
     private var refreshNewAccount = false
-
-    private val nodeStatus = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        perform { render(account.cached()) }
-    }
 
     private val registration = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {
@@ -70,14 +64,16 @@ class XboardAccountActivity : AppCompatActivity() {
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
             insets
         }
-        findViewById<Button>(R.id.account_back).setOnClickListener { finish() }
+        findViewById<Button>(R.id.account_back).apply {
+            if (intent.getBooleanExtra(FROM_MEMBER_CENTER, false)) setText(R.string.xb_back_to_member)
+            setOnClickListener { finish() }
+        }
         findViewById<Button>(R.id.account_register).setOnClickListener {
             registration.launch(Intent(this, XboardRegisterActivity::class.java)
                 .putExtra("email", email.text.toString().trim()))
         }
         primary.setOnClickListener { submit() }
         copySubscription.setOnClickListener { copySubscriptionUrl() }
-        nodes.setOnClickListener { nodeStatus.launch(Intent(this, XboardNodesActivity::class.java)) }
         password.setOnEditorActionListener { _, action, _ ->
             if (action == EditorInfo.IME_ACTION_DONE) { submit(); true } else false
         }
@@ -116,10 +112,7 @@ class XboardAccountActivity : AppCompatActivity() {
         perform {
             val updated = account.refresh(force = true)
             render(updated)
-            if (updated?.profileId != null) {
-                Toast.makeText(this, R.string.xb_login_ready, Toast.LENGTH_LONG).show()
-                finish()
-            }
+            afterSignIn(updated)
         }
     }
 
@@ -142,11 +135,15 @@ class XboardAccountActivity : AppCompatActivity() {
             }
             password.text.clear()
             render(updated)
-            if (signingIn && updated?.profileId != null) {
-                Toast.makeText(this, R.string.xb_login_ready, Toast.LENGTH_LONG).show()
-                finish()
-            }
+            if (signingIn) afterSignIn(updated)
         }
+    }
+
+    private fun afterSignIn(state: XboardBinding?) {
+        if (state == null) return
+        setResult(RESULT_OK)
+        if (state.profileId != null) Toast.makeText(this, R.string.xb_login_ready, Toast.LENGTH_LONG).show()
+        if (state.profileId != null || intent.getBooleanExtra(FROM_MEMBER_CENTER, false)) finish()
     }
 
     private fun perform(signingIn: Boolean = false, action: suspend () -> Unit) {
@@ -176,7 +173,6 @@ class XboardAccountActivity : AppCompatActivity() {
         busy = value
         primary.isEnabled = !value
         logout.isEnabled = !value
-        nodes.isEnabled = !value
         copySubscription.isEnabled = !value
         findViewById<Button>(R.id.account_register).isEnabled = !value
         email.isEnabled = !value
@@ -193,7 +189,6 @@ class XboardAccountActivity : AppCompatActivity() {
         val details = findViewById<TextView>(R.id.account_details)
         findViewById<View>(R.id.login_fields).visibility = if (signedIn) View.GONE else View.VISIBLE
         findViewById<Button>(R.id.account_register).visibility = if (signedIn) View.GONE else View.VISIBLE
-        nodes.visibility = if (signedIn) View.VISIBLE else View.GONE
         copySubscription.visibility = if (signedIn && (sub == null || (sub.planId != null && !sub.isExpired()))) {
             View.VISIBLE
         } else View.GONE
@@ -211,9 +206,7 @@ class XboardAccountActivity : AppCompatActivity() {
                 add(sub.expiredAt?.let {
                     getString(R.string.xb_expires, DateFormat.getDateInstance().format(Date(it * 1000)))
                 } ?: getString(R.string.xb_lifetime))
-                if (sub.total > 0) add(getString(R.string.xb_traffic,
-                    Formatter.formatFileSize(this@XboardAccountActivity, sub.upload + sub.download),
-                    Formatter.formatFileSize(this@XboardAccountActivity, sub.total)))
+                if (sub.total > 0) add(sub.usageText(this@XboardAccountActivity))
                 state.lastSync?.let {
                     add(getString(R.string.xb_last_sync, DateFormat.getDateTimeInstance().format(Date(it))))
                 }
@@ -226,6 +219,10 @@ class XboardAccountActivity : AppCompatActivity() {
             else -> getString(R.string.xb_ready)
         }
         if (signedIn) password.text.clear()
+    }
+
+    companion object {
+        const val FROM_MEMBER_CENTER = "from_member_center"
     }
 
     override fun onDestroy() {

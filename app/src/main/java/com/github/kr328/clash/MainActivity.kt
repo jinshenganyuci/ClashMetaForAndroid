@@ -71,10 +71,8 @@ class MainActivity : BaseActivity<MainDesign>() {
                         }
                         MainDesign.Request.OpenProxy ->
                             startActivity(ProxyActivity::class.intent)
-                        MainDesign.Request.OpenXboardAccount ->
-                            startActivity(XboardAccountActivity::class.intent)
-                        MainDesign.Request.OpenXboardNodes ->
-                            startActivity(XboardNodesActivity::class.intent)
+                        MainDesign.Request.OpenMemberCenter ->
+                            startActivity(XboardMemberCenterActivity::class.intent)
                         MainDesign.Request.OpenProfiles ->
                             startActivity(ProfilesActivity::class.intent)
                         MainDesign.Request.OpenProviders ->

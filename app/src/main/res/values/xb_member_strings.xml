@@ -1,0 +1,21 @@
+<resources>
+    <string name="xb_back_to_member">Back to member center</string>
+    <string name="xb_member_guest">Sign in to view your plan</string>
+    <string name="xb_member_guest_hint">Sign in or create a member account</string>
+    <string name="xb_member_plan_hint">View or update your subscription</string>
+    <string name="xb_member_no_plan_hint">Open for subscription details</string>
+    <string name="xb_member_usage">%1$s GB used of %2$s GB</string>
+    <string name="xb_member_docs">Guides</string>
+    <string name="xb_member_tickets">My tickets</string>
+    <string name="xb_member_orders">My orders</string>
+    <string name="xb_member_invite">My invitations</string>
+    <string name="xb_member_settings">Account settings</string>
+    <string name="xb_member_nodes_hint">Availability and rates</string>
+    <string name="xb_member_traffic_hint">Uploads and downloads</string>
+    <string name="xb_member_docs_hint">Search and read guides</string>
+    <string name="xb_member_tickets_hint">Open or reply to tickets</string>
+    <string name="xb_member_orders_hint">Order history and details</string>
+    <string name="xb_member_invite_hint">Codes and commissions</string>
+    <string name="xb_member_settings_hint">Wallet, password and notifications</string>
+    <string name="xb_member_load_failed">Could not refresh your account. Tap My plan to retry.</string>
+</resources>

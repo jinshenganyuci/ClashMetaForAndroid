@@ -108,20 +108,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/main_card_margin_vertical"
-                    android:onClick="@{() -> self.request(Request.OpenXboardAccount)}"
-                    app:icon="@drawable/ic_baseline_cloud_download"
+                    android:onClick="@{() -> self.request(Request.OpenMemberCenter)}"
+                    app:icon="@drawable/ic_member_account"
                     app:subtext="@{accountSummary != null ? accountSummary : @string/xboard_account_hint}"
-                    app:text="@string/xboard_account" />
-
-                <com.github.kr328.clash.design.view.LargeActionCard
-                    android:id="@+id/xboard_nodes_entry"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/main_card_margin_vertical"
-                    android:onClick="@{() -> self.request(Request.OpenXboardNodes)}"
-                    app:icon="@drawable/ic_baseline_dns"
-                    app:subtext="@string/xb_nodes_summary"
-                    app:text="@string/xb_nodes_title" />
+                    app:text="@string/xb_member_center" />
 
                 <com.github.kr328.clash.design.view.LargeActionCard
                     android:id="@+id/xboard_profiles_entry"

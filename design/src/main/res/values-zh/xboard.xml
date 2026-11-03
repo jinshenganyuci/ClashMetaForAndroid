@@ -1,7 +1,6 @@
 <resources>
     <string name="xboard_app_name">IKUN Clash</string>
-    <string name="xboard_account">我的套餐</string>
-    <string name="xboard_account_hint">登录 Xboard 或管理订阅</string>
+    <string name="xb_member_center">会员中心</string>
+    <string name="xboard_account_hint">套餐、节点和账号服务</string>
     <string name="xb_nodes_title">节点状态</string>
-    <string name="xb_nodes_summary">查看在线状态和流量倍率</string>
 </resources>
