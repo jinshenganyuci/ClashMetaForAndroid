@@ -1,0 +1,14 @@
+<resources>
+    <string name="xb_traffic_title">Traffic details</string>
+    <string name="xb_traffic_loading">Loading this month’s traffic…</string>
+    <string name="xb_traffic_login">Sign in to see this month’s traffic records.</string>
+    <string name="xb_traffic_empty">No traffic records this month.</string>
+    <string name="xb_traffic_failed">Could not load traffic records. Tap Refresh to try again.</string>
+    <string name="xb_traffic_total">Billed this month　%1$s</string>
+    <string name="xb_traffic_rate">Billing rate %1$s×</string>
+    <string name="xb_traffic_unknown_rate">Billing rate unavailable</string>
+    <string name="xb_traffic_billed">Billed traffic　%1$s</string>
+    <string name="xb_traffic_directions">Actual upload　%1$s\nActual download　%2$s</string>
+    <string name="xb_traffic_unavailable">Unavailable</string>
+    <string name="xb_traffic_rate_note">Actual usage cannot be calculated for records with a zero or unknown rate.</string>
+</resources>

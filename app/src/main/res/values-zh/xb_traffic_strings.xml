@@ -1,0 +1,14 @@
+<resources>
+    <string name="xb_traffic_title">流量明细</string>
+    <string name="xb_traffic_loading">正在读取本月流量…</string>
+    <string name="xb_traffic_login">登录后可查看本月的流量明细。</string>
+    <string name="xb_traffic_empty">本月暂无流量记录。</string>
+    <string name="xb_traffic_failed">暂时无法读取流量明细，请点击刷新重试。</string>
+    <string name="xb_traffic_total">本月扣除流量　%1$s</string>
+    <string name="xb_traffic_rate">扣费倍率 %1$s×</string>
+    <string name="xb_traffic_unknown_rate">扣费倍率未知</string>
+    <string name="xb_traffic_billed">扣除流量　%1$s</string>
+    <string name="xb_traffic_directions">实际上行　%1$s\n实际下行　%2$s</string>
+    <string name="xb_traffic_unavailable">无法还原</string>
+    <string name="xb_traffic_rate_note">倍率为零或未知的记录无法还原实际用量。</string>
+</resources>

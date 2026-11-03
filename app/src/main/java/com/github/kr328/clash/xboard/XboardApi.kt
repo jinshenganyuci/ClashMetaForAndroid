@@ -142,6 +142,16 @@ object XboardApi {
         }
     }
 
+    suspend fun trafficLog(bearer: String): List<XboardTrafficRecord> = withContext(Dispatchers.IO) {
+        val response = request("/user/stat/getTrafficLog", bearer = bearer, maxResponseChars = 8 * 1024 * 1024)
+        try {
+            val rows = response.getJSONArray("data")
+            List(rows.length()) { XboardTrafficRecord.fromJson(rows.getJSONObject(it)) }
+        } catch (_: JSONException) {
+            throw IOException("面板返回的流量记录格式无效")
+        }
+    }
+
     private fun data(response: JSONObject): JSONObject =
         response.optJSONObject("data") ?: throw IOException("面板未返回有效的数据")
 
