@@ -72,6 +72,12 @@
         </activity-alias>
 
         <activity
+            android:name=".XboardAccountActivity"
+            android:exported="false"
+            android:label="@string/xb_plan"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".ExternalControlActivity"
             android:excludeFromRecents="true"
             android:exported="true"

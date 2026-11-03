@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
@@ -22,6 +21,13 @@ import com.github.kr328.clash.util.stopClashService
 import com.github.kr328.clash.util.withClash
 import com.github.kr328.clash.util.withProfile
 import com.github.kr328.clash.core.bridge.*
+import com.github.kr328.clash.xboard.XboardAccount
+import com.github.kr328.clash.xboard.XboardBinding
+import com.github.kr328.clash.xboard.XboardSessionExpiredException
+import com.github.kr328.clash.xboard.isExpired
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.selects.select
@@ -30,12 +36,14 @@ import java.util.concurrent.TimeUnit
 import com.github.kr328.clash.design.R as DesignR
 
 class MainActivity : BaseActivity<MainDesign>() {
+    private val account by lazy { XboardAccount(this) }
+    private var accountRefresh: Job? = null
+    private var offerLogin = true
+
     override suspend fun main() {
         val design = MainDesign(this)
 
         setContentDesign(design)
-
-        design.fetch()
 
         val ticker = ticker(TimeUnit.SECONDS.toMillis(1))
 
@@ -43,7 +51,10 @@ class MainActivity : BaseActivity<MainDesign>() {
             select<Unit> {
                 events.onReceive {
                     when (it) {
-                        Event.ActivityStart,
+                        Event.ActivityStart -> {
+                            design.checkAccount()
+                            design.fetch()
+                        }
                         Event.ServiceRecreated,
                         Event.ClashStop, Event.ClashStart,
                         Event.ProfileLoaded, Event.ProfileChanged -> design.fetch()
@@ -60,6 +71,8 @@ class MainActivity : BaseActivity<MainDesign>() {
                         }
                         MainDesign.Request.OpenProxy ->
                             startActivity(ProxyActivity::class.intent)
+                        MainDesign.Request.OpenXboardAccount ->
+                            startActivity(XboardAccountActivity::class.intent)
                         MainDesign.Request.OpenProfiles ->
                             startActivity(ProfilesActivity::class.intent)
                         MainDesign.Request.OpenProviders ->
@@ -85,6 +98,40 @@ class MainActivity : BaseActivity<MainDesign>() {
                     }
                 }
             }
+        }
+    }
+
+    private fun MainDesign.checkAccount() {
+        if (accountRefresh?.isActive == true) return
+        accountRefresh = launch {
+            try {
+                val cached = account.cached()
+                setAccountSummary(cached?.summary())
+                val prompt = offerLogin
+                offerLogin = false
+                if (cached == null) {
+                    if (prompt && activityStarted) startActivity(XboardAccountActivity::class.intent)
+                    return@launch
+                }
+                setAccountSummary(account.refresh(force = false)?.summary())
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: XboardSessionExpiredException) {
+                setAccountSummary(getString(R.string.xb_expired_session))
+                if (activityStarted) startActivity(XboardAccountActivity::class.intent)
+            } catch (_: Exception) {
+                setAccountSummary(getString(R.string.xb_error))
+            }
+        }
+    }
+
+    private fun XboardBinding.summary(): String {
+        val sub = subscription ?: return email
+        return when {
+            sub.planId == null -> getString(R.string.xb_no_plan)
+            sub.isExpired() -> getString(R.string.xb_expired)
+            profileId == null -> getString(R.string.xb_no_nodes)
+            else -> sub.planName ?: getString(R.string.xb_unnamed)
         }
     }
 
@@ -125,6 +172,11 @@ class MainActivity : BaseActivity<MainDesign>() {
             return
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            startActivityForResult(RequestPermission(), android.Manifest.permission.POST_NOTIFICATIONS)
+        }
         val vpnRequest = startClashService()
 
         try {
@@ -150,18 +202,6 @@ class MainActivity : BaseActivity<MainDesign>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val requestPermissionLauncher =
-                registerForActivityResult(RequestPermission()
-                ) { isGranted: Boolean ->
-                }
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    android.Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
         setupShortcuts()
     }
 

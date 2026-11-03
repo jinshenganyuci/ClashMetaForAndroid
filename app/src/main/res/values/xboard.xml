@@ -1,0 +1,28 @@
+<resources>
+    <string name="xb_site">IKUN · Xboard</string>
+    <string name="xb_login">Sign in to Xboard</string>
+    <string name="xb_intro">Use your account for ikun.iil.im. Your subscription will be imported automatically.</string>
+    <string name="xb_email">Email</string>
+    <string name="xb_password">Password</string>
+    <string name="xb_submit">Sign in and import subscription</string>
+    <string name="xb_plan">My subscription</string>
+    <string name="xb_refresh">Update subscription now</string>
+    <string name="xb_logout">Sign out</string>
+    <string name="xb_logout_confirm">Sign out and remove this account’s subscription from this phone?</string>
+    <string name="xb_home">Back to Clash Meta</string>
+    <string name="xb_checking">Checking your plan and updating the profile…</string>
+    <string name="xb_ready">Subscription is ready. You can now start the VPN from the home screen.</string>
+    <string name="xb_no_plan">No active plan</string>
+    <string name="xb_expired">Plan expired</string>
+    <string name="xb_no_nodes">No available subscription. You can try updating again.</string>
+    <string name="xb_lifetime">No expiry date</string>
+    <string name="xb_expires">Expires %1$s</string>
+    <string name="xb_traffic">Panel usage　%1$s / %2$s</string>
+    <string name="xb_last_sync">Profile updated　%1$s</string>
+    <string name="xb_unnamed">Subscribed plan</string>
+    <string name="xb_expired_session">Your session expired. Please sign in again.</string>
+    <string name="xb_error">Could not update. Check your connection and try again.</string>
+    <string name="xb_login_error">Could not sign in. Check your email, password and connection.</string>
+    <string name="xb_required">Required</string>
+    <string name="xb_login_ready">Subscription imported. Tap to start the VPN.</string>
+</resources>

@@ -18,6 +18,7 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
         ToggleStatus,
         OpenProxy,
         OpenProfiles,
+        OpenXboardAccount,
         OpenProviders,
         OpenLogs,
         OpenSettings,
@@ -30,6 +31,10 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
 
     override val root: View
         get() = binding.root
+
+    fun setAccountSummary(summary: String?) {
+        binding.accountSummary = summary
+    }
 
     suspend fun setProfileName(name: String?) {
         withContext(Dispatchers.Main) {

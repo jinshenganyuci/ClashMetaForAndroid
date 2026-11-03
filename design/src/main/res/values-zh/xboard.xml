@@ -1,0 +1,4 @@
+<resources>
+    <string name="xboard_account">我的套餐</string>
+    <string name="xboard_account_hint">登录 Xboard 或管理订阅</string>
+</resources>

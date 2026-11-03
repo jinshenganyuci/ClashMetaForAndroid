@@ -15,6 +15,9 @@
             name="mode"
             type="String" />
         <variable
+            name="accountSummary"
+            type="String" />
+        <variable
             name="profileName"
             type="String" />
         <variable
@@ -99,6 +102,15 @@
                     app:icon="@drawable/ic_baseline_apps"
                     app:subtext="@{mode}"
                     app:text="@string/proxy" />
+
+                <com.github.kr328.clash.design.view.LargeActionCard
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/main_card_margin_vertical"
+                    android:onClick="@{() -> self.request(Request.OpenXboardAccount)}"
+                    app:icon="@drawable/ic_baseline_cloud_download"
+                    app:subtext="@{accountSummary != null ? accountSummary : @string/xboard_account_hint}"
+                    app:text="@string/xboard_account" />
 
                 <com.github.kr328.clash.design.view.LargeActionCard
                     android:layout_width="match_parent"
