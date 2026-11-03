@@ -1,0 +1,23 @@
+<resources>
+    <string name="xb_support_search_hint">Search guides</string>
+    <string name="xb_support_search">Search</string>
+    <string name="xb_support_no_docs">No guides yet.</string>
+    <string name="xb_support_no_results">No matching guides.</string>
+    <string name="xb_support_new_ticket">New ticket</string>
+    <string name="xb_support_no_tickets">No tickets yet.</string>
+    <string name="xb_support_open">Awaiting reply</string>
+    <string name="xb_support_closed">Closed</string>
+    <string name="xb_support_replied">Answered</string>
+    <string name="xb_support_created">Created %1$s</string>
+    <string name="xb_support_me">Me</string>
+    <string name="xb_support_staff">Support</string>
+    <string name="xb_support_reply_hint">Write a reply</string>
+    <string name="xb_support_send_reply">Send reply</string>
+    <string name="xb_support_close">Close ticket</string>
+    <string name="xb_support_close_confirm">Close this conversation? Replies will be disabled.</string>
+    <string name="xb_support_subject">Subject</string>
+    <string name="xb_support_priority">Priority</string>
+    <string name="xb_support_issue">Describe the issue</string>
+    <string name="xb_support_submit">Submit ticket</string>
+    <string-array name="xb_support_priorities"><item>Low</item><item>Medium</item><item>High</item></string-array>
+</resources>

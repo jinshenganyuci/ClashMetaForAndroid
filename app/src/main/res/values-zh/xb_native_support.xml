@@ -1,0 +1,23 @@
+<resources>
+    <string name="xb_support_search_hint">搜索使用文档</string>
+    <string name="xb_support_search">搜索</string>
+    <string name="xb_support_no_docs">暂无使用文档</string>
+    <string name="xb_support_no_results">没有找到匹配的文档</string>
+    <string name="xb_support_new_ticket">新建工单</string>
+    <string name="xb_support_no_tickets">暂无工单</string>
+    <string name="xb_support_open">等待回复</string>
+    <string name="xb_support_closed">已关闭</string>
+    <string name="xb_support_replied">已回复</string>
+    <string name="xb_support_created">创建于 %1$s</string>
+    <string name="xb_support_me">我</string>
+    <string name="xb_support_staff">客服</string>
+    <string name="xb_support_reply_hint">输入回复内容</string>
+    <string name="xb_support_send_reply">提交回复</string>
+    <string name="xb_support_close">关闭工单</string>
+    <string name="xb_support_close_confirm">关闭后将无法继续回复这张工单。</string>
+    <string name="xb_support_subject">工单主题</string>
+    <string name="xb_support_priority">工单级别</string>
+    <string name="xb_support_issue">描述遇到的问题</string>
+    <string name="xb_support_submit">提交工单</string>
+    <string-array name="xb_support_priorities"><item>低</item><item>中</item><item>高</item></string-array>
+</resources>
